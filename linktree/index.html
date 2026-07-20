@@ -1478,8 +1478,9 @@ video {
                     let deltaY = currentY - touchStartY;
                     if (deltaY > 0) { // Only drag down
                         modalBox.style.transform = `translateY(${deltaY}px)`;
+                        if (e.cancelable) e.preventDefault(); // Stop page from scrolling
                     }
-                }, {passive: true});
+                }, {passive: false});
                 
                 modalBox.addEventListener('touchend', (e) => {
                     modalBox.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
