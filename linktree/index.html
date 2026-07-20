@@ -1058,7 +1058,7 @@ video {
         <!-- Perfil -->
         <div class="mb-8 text-center flex flex-col items-center">
             <div class="w-28 h-28 rounded-full overflow-hidden border-2 border-brand-gold p-1 mb-4 shadow-[0_0_30px_rgba(189,166,98,0.2)] bg-brand-dark">
-                <img src="/linktree/sobre.jpg?v=2" alt="Dr. Nelson Quintino" class="w-full h-full object-cover rounded-full object-top">
+                <img src="profile.jpg" alt="Dr. Nelson Quintino" class="w-full h-full object-cover rounded-full object-top">
             </div>
             <h1 class="text-2xl font-heading font-light text-brand-light mb-1">Dr. Nelson Quintino</h1>
             <p class="text-brand-gold/80 text-sm tracking-widest uppercase mb-1">Cirurgia Facial</p>
@@ -1266,69 +1266,119 @@ video {
     </main>
 
     
-    <!-- Modal de Localização -->
+        <!-- Modal de Localização -->
     <style>
     .custom-loc-overlay {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
         z-index: 9999;
-        background-color: rgba(0, 0, 0, 0.9);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        display: none; /* hidden by default */
-        align-items: center;
-        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        display: none;
         opacity: 0;
         transition: opacity 0.3s ease;
     }
     .custom-loc-overlay.show-flex {
-        display: flex;
+        display: block;
     }
     .custom-loc-overlay.active {
         opacity: 1;
     }
     .custom-loc-box {
-        background-color: #111111;
-        border: 1px solid rgba(201, 168, 106, 0.3);
-        border-radius: 1rem;
-        width: 90%;
-        max-width: 24rem;
+        background-color: #1F2937; /* Dark slate matching the example */
+        border-radius: 1.5rem 1.5rem 0 0;
+        width: 100%;
+        max-width: 36rem;
+        margin: 0 auto;
         padding: 1.5rem;
-        position: relative;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         box-sizing: border-box;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
     }
     .custom-loc-overlay.active .custom-loc-box {
-        transform: scale(1);
+        transform: translateY(0);
+    }
+    .drag-handle {
+        width: 3rem;
+        height: 0.25rem;
+        background-color: #4B5563;
+        border-radius: 9999px;
+        margin: 0 auto 1.5rem auto;
+    }
+    .loc-title {
+        font-family: 'Inter', sans-serif;
+        text-align: center;
+        color: #FFFFFF;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .loc-desc-container {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        padding: 0 1rem;
+    }
+    .loc-desc {
+        text-align: center;
+        color: #9CA3AF;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+    .close-btn {
+        width: 100%;
+        background-color: #0F172A; /* Darker blue/slate */
+        color: #FFFFFF;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 1rem;
+        border-radius: 1rem;
+        border: none;
+        cursor: pointer;
+        margin-top: 1.5rem;
+        transition: background-color 0.2s;
+    }
+    .close-btn:hover {
+        background-color: #1E293B;
     }
     </style>
 
     <div id="location-modal" class="custom-loc-overlay">
         <div class="custom-loc-box" id="location-modal-content">
-            <button onclick="closeLocationModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; cursor: pointer; color: #9ca3af;">
-                <svg class="w-6 h-6" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <div class="text-brand-gold mb-4 flex justify-center" style="display: flex; justify-content: center; margin-bottom: 1rem; color: #c9a86a;">
-                <svg class="w-10 h-10" style="width: 2.5rem; height: 2.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            </div>
-            <h3 id="loc-modal-title" style="font-family: 'Fraunces', serif; text-align: center; color: #f3f4f6; font-size: 1.5rem; line-height: 2rem; margin-bottom: 0.5rem; font-weight: 300;">Clínica</h3>
-            <p id="loc-modal-address" style="text-align: center; color: #9ca3af; font-size: 0.875rem; font-weight: 300; margin-bottom: 1.5rem;">Endereço...</p>
+            <div class="drag-handle"></div>
             
+            <h3 id="loc-modal-title" class="loc-title">Localização</h3>
             
-            <div id="loc-modal-iframe-container" style="display: none; margin-bottom: 1.5rem; width: 100%; border-radius: 0.75rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-                <iframe id="loc-modal-iframe" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="loc-desc-container">
+                <svg class="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                <p id="loc-modal-address" class="loc-desc">Endereço...</p>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-
+            
+            <div id="loc-modal-iframe-container" style="display: none; width: 100%; border-radius: 0.75rem; overflow: hidden; background-color: #E5E7EB;">
+                <iframe id="loc-modal-iframe" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            
+            <div id="loc-modal-fallback" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
                 <a id="loc-modal-maps-btn" href="#" target="_blank" style="width: 100%; background-color: #c9a86a; color: #1a1a1a; text-align: center; font-weight: 600; padding: 0.75rem; border-radius: 0.75rem; text-decoration: none; display: block;">
-                    Abrir no Google Maps
+                    Abrir App do Google Maps
                 </a>
                 <a id="loc-modal-ig-btn" href="#" target="_blank" style="width: 100%; background-color: transparent; color: #f3f4f6; text-align: center; font-weight: 600; padding: 0.75rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                     <svg class="w-5 h-5" style="width: 1.25rem; height: 1.25rem;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                     Acessar Instagram
                 </a>
             </div>
+
+            <button onclick="closeLocationModal()" class="close-btn">Fechar</button>
         </div>
     </div>
 
