@@ -1452,11 +1452,50 @@ video {
             }, 400);
         }
 
-        document.getElementById('location-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeLocationModal();
+
+        // Swipe to close functionality
+        let touchStartY = 0;
+        let currentY = 0;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('location-modal');
+            const modalBox = document.getElementById('location-modal-content');
+            
+            if(modal && modalBox) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeLocationModal();
+                    }
+                });
+                
+                modalBox.addEventListener('touchstart', (e) => {
+                    touchStartY = e.touches[0].clientY;
+                    modalBox.style.transition = 'none';
+                }, {passive: true});
+                
+                modalBox.addEventListener('touchmove', (e) => {
+                    currentY = e.touches[0].clientY;
+                    let deltaY = currentY - touchStartY;
+                    if (deltaY > 0) { // Only drag down
+                        modalBox.style.transform = `translateY(${deltaY}px)`;
+                    }
+                }, {passive: true});
+                
+                modalBox.addEventListener('touchend', (e) => {
+                    modalBox.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+                    let deltaY = currentY - touchStartY;
+                    if (deltaY > 100) {
+                        closeLocationModal();
+                        setTimeout(() => {
+                            modalBox.style.transform = '';
+                        }, 400);
+                    } else {
+                        modalBox.style.transform = 'translateY(0)';
+                    }
+                });
             }
         });
+
     </script>
 </body>
 
